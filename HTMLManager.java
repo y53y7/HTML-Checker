@@ -3,10 +3,11 @@ import java.util.*;
 public class HTMLManager {
   private Queue<HTMLTag> tags;
   
-  public void HTMLManager(Queue<HTMLTag> html) {
+  public HTMLManager(Queue<HTMLTag> html) {
      if(html.isEmpty()) {
         throw new IllegalArgumentException("The queue is empty");
      } else {
+        tags = new LinkedList<>();
         while(!html.isEmpty()) {
            tags.add(html.remove());
         }
@@ -44,7 +45,7 @@ public class HTMLManager {
            if(cur.equals(tags.peek()) && cur.matches(stack.peek())) {  //manages when the closing tag matches the tag at the top of the stack
               tags.add(cur);
               tags.add(stack.pop());
-           } else {
+           } else {                                                     //manages when the closing tag does not match the tag at the top of the stack
               tags.add(cur.getMatching());
               tags.add(cur);
            }
