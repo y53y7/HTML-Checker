@@ -32,6 +32,24 @@ public class HTMLManager {
   }
   
   public void fixHTML() {
+     Stack<HTMLTag> stack = new Stack<>();
+     while(!tags.isEmpty()) {
+        stack.push(tags.remove());
+        HTMLTag cur = stack.pop();
+        if(cur.isSelfClosing()) {                                    //manages self closing tags
+           tags.add(cur);
+        } else if(cur.isOpening()) {                                 //manages opening tags
+           tags.add(cur);
+        } else {                                                      //manages closing tags
+           if(cur.equals(tags.peek()) && cur.matches(stack.peek())) {  //manages when the closing tag matches the tag at the top of the stack
+              tags.add(cur);
+              tags.add(stack.pop());
+           } else {
+              tags.add(cur.getMatching());
+              tags.add(cur);
+           }
+        }
+     }
   }
 }
 
