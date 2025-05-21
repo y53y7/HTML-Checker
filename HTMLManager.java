@@ -34,7 +34,7 @@ public class HTMLManager {
   
   public void fixHTML() {
      Stack<HTMLTag> stack = new Stack<>();
-     while(!tags.isEmpty()) {
+     while(!tags.isEmpty()) {     //cannot be empty, change
         stack.push(tags.remove());
         HTMLTag cur = stack.pop();
         if(cur.isSelfClosing()) {                                    //manages self closing tags
