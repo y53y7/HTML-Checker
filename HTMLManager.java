@@ -34,30 +34,31 @@ public class HTMLManager {
   
 public void fixHTML() {
     Stack<HTMLTag> openTags = new Stack<>();
-    Queue<HTMLTag> fixedTags = new LinkedList<>();
+    Queue<HTMLTag> fixed = new LinkedList<>();
+
     while (!tags.isEmpty()) {
-        HTMLTag current = tags.remove();
-        if (current.isSelfClosing()) {
-            fixedTags.add(current);
-        } else if (current.isOpening()) {
-            openTags.push(current);
-            fixedTags.add(current);
-        } else { /
-            if (!openTags.isEmpty() && current.matches(openTags.peek())) {
-                fixedTags.add(current);
+        HTMLTag tag = tags.remove();
+        if (tag.isSelfClosing()) {
+            fixed.add(tag);
+        } else if (tag.isOpening()) {
+            openTags.push(tag);
+            fixed.add(tag);
+        } else { 
+            if (!openTags.isEmpty() && tag.matches(openTags.peek())) {
                 openTags.pop();
+                fixed.add(tag);
             } else {
-                fixedTags.add(current.getMatching()); 
-                fixedTags.add(current);             
+
             }
         }
     }
+
     while (!openTags.isEmpty()) {
-        HTMLTag unclosed = openTags.pop();
-        fixedTags.add(unclosed.getMatching());
+        HTMLTag leftover = openTags.pop();
+        fixed.add(leftover.getMatching());
     }
 
-    tags = fixedTags;
+    tags = fixed;
 }
 
 }
