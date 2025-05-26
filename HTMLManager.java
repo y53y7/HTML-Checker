@@ -32,25 +32,33 @@ public class HTMLManager {
      return string;
   }
   
-  public void fixHTML() {
-     Stack<HTMLTag> stack = new Stack<>();
-     while(!tags.isEmpty()) {     //cannot be empty, change
-        stack.push(tags.remove());
-        HTMLTag cur = stack.pop();
-        if(cur.isSelfClosing()) {                                    //manages self closing tags
-           tags.add(cur);
-        } else if(cur.isOpening()) {                                 //manages opening tags
-           tags.add(cur);
-        } else {                                                      //manages closing tags
-           if(cur.equals(tags.peek()) && cur.matches(stack.peek())) {  //manages when the closing tag matches the tag at the top of the stack
-              tags.add(cur);
-              tags.add(stack.pop());
-           } else {                                                     //manages when the closing tag does not match the tag at the top of the stack
-              tags.add(cur.getMatching());
-              tags.add(cur);
-           }
+public void fixHTML() {
+    Stack<HTMLTag> openTags = new Stack<>();
+    Queue<HTMLTag> fixedTags = new LinkedList<>();
+    while (!tags.isEmpty()) {
+        HTMLTag current = tags.remove();
+        if (current.isSelfClosing()) {
+            fixedTags.add(current);
+        } else if (current.isOpening()) {
+            openTags.push(current);
+            fixedTags.add(current);
+        } else { /
+            if (!openTags.isEmpty() && current.matches(openTags.peek())) {
+                fixedTags.add(current);
+                openTags.pop();
+            } else {
+                fixedTags.add(current.getMatching()); 
+                fixedTags.add(current);             
+            }
         }
-     }
-  }
+    }
+    while (!openTags.isEmpty()) {
+        HTMLTag unclosed = openTags.pop();
+        fixedTags.add(unclosed.getMatching());
+    }
+
+    tags = fixedTags;
+}
+
 }
 
